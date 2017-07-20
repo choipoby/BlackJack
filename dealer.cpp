@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <memory>
+
 #include "dealer.h"
 #include "player.h"
 
@@ -5,52 +8,73 @@ using namespace std;
 
 Dealer::Dealer()
 {
-  vector<string> kinds = {"spade", "heart", "clover", "diamond"};
-  vector<string>::iterator itr = kinds.begin();
-  for(;itr!=kinds.end(); itr++){
-    for(int i=1; i<=12; i++){
-      Card card(*itr, i);
-      mDeck.push_back(card);
+    vector<string> kinds = {"spade", "heart", "clover", "diamond"};
+    vector<string>::iterator itr = kinds.begin();
+    for(;itr!=kinds.end(); itr++){
+        for(int i=1; i<=12; i++){
+            mDeck.push_back(make_unique<Card>(*itr, i));
+        }
     }
-  }
 }
 
 Dealer::~Dealer()
 {
-  mDeck.clear();
+    mDeck.clear();
 }
 
 void Dealer::addPlayer(shared_ptr<Player> player)
 {
-  mPlayer = player;
+    mPlayers.push_back(player);
 }
 
 void Dealer::shuffleDeck()
 {
-  std::random_shuffle(mDeck.begin(), mDeck.end());
+    random_shuffle(mDeck.begin(), mDeck.end());
 }
 
 void Dealer::startNewGame()
 {
-  mPlayerCards.push_back(mDeck.front());
-  mDeck.front().show();
-  mDeck.pop_front();
+    //player->retrieveCards();
+
+    // give one open, one closed cards to dealer
+    cout << "dealer deck:" << endl;
+    // open card
+    unique_ptr<Card> card = move(issueCard());
+    card->show(true);
+    mDealerCards.push_back(move(card));
+    // closed card
+    card = move(issueCard());
+    card->show(false);
+    mDealerCards.push_back(move(card));
+
+    // give two open cards to all players
+    cout << "player deck:" << endl;
+    vector<shared_ptr<Player>>::iterator itr = mPlayers.begin();
+    for(; itr!=mPlayers.end(); itr++) {
+        if (21 == (*itr)->hit(2) ) {
+            //itr->won();
+        };
+    }
 }
 
 bool Dealer::winnerDecided()
 {
-  int sum = 0;
-  vector<Card>::const_iterator citr = mPlayerCards.begin();
-  for(; citr!=mPlayerCards.end(); citr++) {
-    sum += citr->number();
-  }
-  return true;
+    /*
+    int sum = 0;
+    vector<Card>::iterator itr = mPlayerCards.begin();
+    for(; itr!=mPlayerCards.end(); itr++) {
+        sum += itr->number();
+    }
+    */
+    return true;
 }
 
-void Dealer::stand()
+unique_ptr<Card> Dealer::issueCard()
 {
-}
-
-void Dealer::hit()
-{
+    unique_ptr<Card> card;
+    if(!mDeck.empty()){
+        card = move(mDeck.at(0));
+        mDeck.pop_front();
+    }
+    return card;
 }

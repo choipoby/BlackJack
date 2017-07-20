@@ -30,22 +30,29 @@ int main(int argc, char** argv)
     }
 
     dealer->startNewGame();
+
     do{
-      cout << "stand or hit? (S/H)";
+      cout << "stand or hit? (S/H) or quit(Q)";
       getline (cin, answer);
       if(answer == "S"){
-        dealer->stand();
+        player->stand();
         break;
       } else if (answer =="H") {
-        dealer->hit();
-        if(!dealer->winnerDecided()){
-          continue;
-        }
+          int result = player->hit(1);
+
+          if (result == 21 ) {
+              cout << "player won" << endl;
+          } else if (result > 21) {
+              cout << "player lost" << endl;
+              break;
+          }
+      } else if (answer == "Q" || answer == "q"){
+          cout << "Bye" << endl;
+          return 0;
       } else {
         continue;
       }
     }while(true);
   }while(true);
-
   return 0;
 }

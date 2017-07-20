@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-c -Wall -std=c++0x
+CFLAGS=-c -Wall -std=c++14
 LDFLAGS=
 SOURCES=blackjack.cpp dealer.cpp card.cpp player.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
@@ -12,3 +12,6 @@ $(EXECUTABLE): $(OBJECTS)
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm *.o $(EXECUTABLE)

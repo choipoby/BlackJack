@@ -11,20 +11,20 @@
 class Dealer
 {
 public:
-  Dealer();
-  virtual ~Dealer();
-  void addPlayer(std::shared_ptr<Player> player);
-  void shuffleDeck();
-  void startNewGame();
-  bool winnerDecided();
-  void stand();
-  void hit();
+    Dealer();
+    virtual ~Dealer();
+    void addPlayer(std::shared_ptr<Player> player);
+    void shuffleDeck();
+    void startNewGame();
+    bool winnerDecided();
+    std::unique_ptr<Card> issueCard();
+
 private:
-  std::deque<Card> mDeck;
-  std::vector<Card> mDeaderCards;
-  std::vector<Card> mPlayerCards;
-  std::shared_ptr<Player> mPlayer;
-  int mNumGames;
+    std::deque<std::unique_ptr<Card>> mDeck;
+    std::vector<std::unique_ptr<Card>> mDealerCards;
+    std::vector<std::unique_ptr<Card>> mPlayerCards;
+    std::vector<std::shared_ptr<Player>> mPlayers;
+    int mNumGames;
 };
 
 #endif
